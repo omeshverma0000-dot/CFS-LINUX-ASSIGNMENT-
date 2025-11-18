@@ -1,0 +1,40 @@
+1. backup.sh (Backup a Directory)
+This script requires one argument (the source directory path) and copies it recursively to a timestamped folder inside ~/backups.
+
+
+
+#!/bin/bash
+
+#====================================================
+# Script: backup.sh
+# Purpose: Copies a user-specified source directory to a 
+#          timestamped backup location.
+# Author: ajite
+# Date: 2025-11-01
+#====================================================
+
+# 1. Define variables
+BACKUP_DEST="/home/ajite/backups" # The target directory where all backups will be saved.
+TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S) # Generate a precise timestamp.
+BACKUP_FOLDER="backup_$TIMESTAMP" # The name for the new backup folder.
+
+# 2. Check for required arguments
+if [ -z "$1" ]; then
+    echo "Error: Please provide the source directory path."
+    echo "Usage: ./backup.sh /path/to/source_dir"
+    exit 1
+fi
+
+SOURCE_DIR="$1" # Store the first argument as the source directory.
+
+# 3. Create the backup destination if it doesn't exist
+mkdir -p "$BACKUP_DEST"
+echo "Backup destination ready: $BACKUP_DEST"
+
+# 4. Perform the recursive copy
+# cp -r: copies directories recursively. cp -v: provides verbose output.
+cp -rv "$SOURCE_DIR" "$BACKUP_DEST/$BACKUP_FOLDER"
+
+# 5. Display completion message
+echo "------------------------------------------------"
+echo "Backup complete! Target: $BACKUP_DEST/$BACKUP_FOLDER"

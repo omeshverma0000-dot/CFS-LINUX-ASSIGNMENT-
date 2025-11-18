@@ -1,0 +1,45 @@
+monitor.sh (CPU/Memory Monitoring)
+This script logs system usage data every 3 seconds for 5 samples into a timestamped file in ~/monitor_logs.
+
+Bash
+
+#!/bin/bash
+
+#====================================================
+# Script: monitor.sh
+# Purpose: Logs CPU and memory usage to a file at regular intervals.
+# Author: ajite
+# Date: 2025-11-01
+#====================================================
+
+# 1. Define variables
+LOG_FILE="/home/ajite/monitor_logs/usage_$(date +%Y%m%d_%H%M).log" # Log file path with timestamp.
+NUM_SAMPLES=5 # Number of data points (snapshots) to capture.
+DELAY_INTERVAL=3 # The delay (in seconds) between each sample.
+
+# 2. Create the log directory if it doesn't exist
+mkdir -p "/home/ajite/monitor_logs"
+echo "Logging system statistics to $LOG_FILE"
+
+# 3. Log System Information (Headers)
+echo "Time, CPU_Usage(%), Memory_Used(MB)" > "$LOG_FILE"
+
+# 4. Loop to capture usage data
+for i in $(seq 1 $NUM_SAMPLES); do
+    # Get CPU and Memory usage summary from 'top' and parse with awk.
+    USAGE_DATA=$(top -b -n 1 | head -8 | tail -2 | awk '/^%Cpu/ {cpu=$2} /MiB Mem/ {mem=$8} END {print cpu, mem}')
+
+    # Extract values.
+    CPU_USAGE=$(echo $USAGE_DATA | awk '{print $1}')
+    MEM_USED=$(echo $USAGE_DATA | awk '{print $2}')
+    CURRENT_TIME=$(date +%H:%M:%S)
+
+    # Log the data (Appending >>).
+    echo "$CURRENT_TIME, $CPU_USAGE, $MEM_USED" >> "$LOG_FILE"
+
+    # Wait for the specified interval.
+    sleep $DELAY_INTERVAL
+done
+
+# 5. Completion message
+echo "Monitoring complete. Log file created successfully."

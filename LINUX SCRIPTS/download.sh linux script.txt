@@ -1,0 +1,44 @@
+download.sh (Automated Download Task)
+This script downloads a file from a specified URL (or a default URL if none is provided) using wget and saves it to ~/downloads.
+
+
+
+#!/bin/bash
+
+#====================================================
+# Script: download.sh
+# Purpose: Downloads a file from the internet using wget 
+#           and stores it in a predefined downloads folder.
+# Author: ajite
+# Date: 2025-11-01
+#====================================================
+
+# 1. Define variables
+DOWNLOAD_DIR="/home/ajite/downloads" # The directory where all downloaded files will be saved.
+DEFAULT_URL="https://www.google.com/robots.txt" # A small, safe default file to download.
+
+# 2. Check for required arguments and set the URL
+if [ -z "$1" ]; then
+    echo "No URL specified. Using default URL: $DEFAULT_URL"
+    TARGET_URL="$DEFAULT_URL"
+else
+    TARGET_URL="$1"
+fi
+
+# 3. Create the download directory if it doesn't exist
+mkdir -p "$DOWNLOAD_DIR"
+echo "Download destination: $DOWNLOAD_DIR"
+
+# 4. Perform the download
+# wget -P: specifies the directory to place the downloaded file.
+echo "Attempting to download: $TARGET_URL"
+wget -P "$DOWNLOAD_DIR" "$TARGET_URL"
+
+# 5. Check the exit status
+if [ $? -eq 0 ]; then # $? holds the exit code of the last command (wget). 0 is success.
+    echo "------------------------------------------------"
+    echo "Download succeeded! File saved to $DOWNLOAD_DIR"
+else
+    echo "------------------------------------------------"
+    echo "Download FAILED. Please check the URL and connectivity."
+fi
